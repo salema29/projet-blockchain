@@ -1,0 +1,165 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  background-color: #0f1117;
+  color: #e6e6e6;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+header {
+  text-align: center;
+  padding: 30px 20px 20px;
+  border-bottom: 1px solid #2a2d3a;
+  margin-bottom: 30px;
+}
+
+header h1 {
+  font-size: 2rem;
+  color: #7c6aff;
+  margin-bottom: 8px;
+}
+
+header p {
+  color: #888;
+  font-size: 0.9rem;
+}
+
+section {
+  background: #1a1d2e;
+  border: 1px solid #2a2d3a;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+section h2 {
+  font-size: 1.1rem;
+  color: #a0a0b8;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #2a2d3a;
+}
+
+button {
+  background-color: #7c6aff;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  width: 100%;
+  margin-top: 8px;
+}
+
+button:hover:not(:disabled) {
+  background-color: #6355dd;
+}
+
+button:disabled {
+  background-color: #3a3a5c;
+  cursor: not-allowed;
+}
+
+.form-groupe {
+  margin-bottom: 12px;
+}
+
+.form-groupe label {
+  display: block;
+  margin-bottom: 6px;
+  color: #a0a0b8;
+  font-size: 0.9rem;
+}
+
+input[type="number"],
+input[type="text"] {
+  width: 100%;
+  padding: 10px 14px;
+  background: #0f1117;
+  border: 1px solid #2a2d3a;
+  border-radius: 8px;
+  color: #e6e6e6;
+  font-size: 1rem;
+  transition: border 0.2s;
+}
+
+input:focus {
+  outline: none;
+  border-color: #7c6aff;
+}
+
+#zone-resultats {
+  background: #0f1117;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 12px;
+  font-size: 1.1rem;
+}
+
+#zone-resultats strong {
+  color: #7c6aff;
+  font-size: 1.4rem;
+}
+
+#adresse-wallet {
+  margin-top: 10px;
+  font-family: monospace;
+  color: #7c6aff;
+  font-size: 0.9rem;
+}
+
+#chargement {
+  text-align: center;
+  color: #f0a500;
+  padding: 12px;
+  margin-top: 8px;
+  background: #1f1800;
+  border-radius: 8px;
+  border: 1px solid #f0a50040;
+}
+
+#zone-messages {
+  max-width: 700px;
+  margin: 0 auto 20px;
+}
+
+.message {
+  padding: 14px 18px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  animation: glisser 0.3s ease;
+}
+
+@keyframes glisser {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.message-succes {
+  background: #0d2b1a;
+  color: #4caf87;
+  border: 1px solid #4caf8740;
+}
+
+.message-erreur {
+  background: #2b0d0d;
+  color: #f87171;
+  border: 1px solid #f8717140;
+}
+
+.message-info {
+  background: #0d1e2b;
+  color: #60a5fa;
+  border: 1px solid #60a5fa40;
+}

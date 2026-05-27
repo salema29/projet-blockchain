@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mon DApp - Mini-Projet Blockchain</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header>
+    <h1>Mon DApp Blockchain</h1>
+    <p>Reseau : <strong id="reseau">Non connecte</strong></p>
+  </header>
+
+  <section id="section-connexion">
+    <h2>Connexion</h2>
+    <button id="btn-connecter">Se connecter avec MetaMask</button>
+    <p id="adresse-wallet">Aucun wallet connecte</p>
+  </section>
+
+  <section id="section-lire">
+    <h2>Lire les donnees</h2>
+    <button id="btn-lire">Actualiser les donnees</button>
+    <div id="zone-resultats">
+      <p>Valeur actuelle : <strong id="valeur-contrat">-</strong></p>
+    </div>
+  </section>
+
+  <section id="section-ecrire">
+    <h2>Interagir avec le contrat</h2>
+    <div class="form-groupe">
+      <label for="input-valeur">Nouvelle valeur :</label>
+      <input type="number" id="input-valeur" placeholder="Entrer une valeur" />
+    </div>
+    <button id="btn-envoyer">Envoyer la transaction</button>
+    <div id="chargement" style="display:none">
+      Transaction en cours... Confirme dans MetaMask
+    </div>
+  </section>
+
+  <div id="zone-messages"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
+  <script src="abi.js"></script>
+  <script src="app.js"></script>
+
+</body>
+</html>
