@@ -99,18 +99,6 @@ input:focus {
   border-color: #7c6aff;
 }
 
-#zone-resultats {
-  background: #0f1117;
-  border-radius: 8px;
-  padding: 16px;
-  margin-top: 12px;
-  font-size: 1.1rem;
-}
-
-#zone-resultats strong {
-  color: #7c6aff;
-  font-size: 1.4rem;
-}
 
 #adresse-wallet {
   margin-top: 10px;
@@ -162,4 +150,60 @@ input:focus {
   background: #0d1e2b;
   color: #60a5fa;
   border: 1px solid #60a5fa40;
+}
+
+.info-ligne {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #2a2d3a;
+  font-size: 0.95rem;
+}
+
+.info-ligne:last-child {
+  border-bottom: none;
+}
+
+.info-ligne .label {
+  color: #a0a0b8;
+  font-size: 0.85rem;
+}
+
+.proposition {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: #0f1117;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.proposition-id {
+  background: #7c6aff;
+  color: white;
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  min-width: 32px;
+  text-align: center;
+}
+
+.proposition-nom {
+  flex: 1;
+  font-size: 1rem;
+}
+
+.proposition-votes {
+  color: #7c6aff;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.resultat-egalite {
+  color: #f0a500;
+  font-weight: bold;
+  text-align: center;
+  padding: 12px;
 }

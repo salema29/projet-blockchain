@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mon DApp - Mini-Projet Blockchain</title>
+  <title>DecentralizedVote - DApp</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
   <header>
-    <h1>Mon DApp Blockchain</h1>
+    <h1>Vote Decentralise</h1>
     <p>Reseau : <strong id="reseau">Non connecte</strong></p>
   </header>
 
@@ -19,24 +19,40 @@
     <p id="adresse-wallet">Aucun wallet connecte</p>
   </section>
 
-  <section id="section-lire">
-    <h2>Lire les donnees</h2>
-    <button id="btn-lire">Actualiser les donnees</button>
-    <div id="zone-resultats">
-      <p>Valeur actuelle : <strong id="valeur-contrat">-</strong></p>
+  <section id="section-election">
+    <h2>Chercher une election</h2>
+    <div class="form-groupe">
+      <label for="input-election-id">ID de l'election :</label>
+      <input type="number" id="input-election-id" placeholder="Ex : 1" min="1" />
+    </div>
+    <button id="btn-charger">Charger l'election</button>
+
+    <div id="zone-election" style="display:none">
+      <div class="info-ligne"><span class="label">Titre</span><span id="election-titre">-</span></div>
+      <div class="info-ligne"><span class="label">Description</span><span id="election-description">-</span></div>
+      <div class="info-ligne"><span class="label">Statut</span><span id="election-statut">-</span></div>
+      <div class="info-ligne"><span class="label">Debut</span><span id="election-debut">-</span></div>
+      <div class="info-ligne"><span class="label">Fin</span><span id="election-fin">-</span></div>
+      <div class="info-ligne"><span class="label">Votes totaux</span><span id="election-votes">-</span></div>
     </div>
   </section>
 
-  <section id="section-ecrire">
-    <h2>Interagir avec le contrat</h2>
-    <div class="form-groupe">
-      <label for="input-valeur">Nouvelle valeur :</label>
-      <input type="number" id="input-valeur" placeholder="Entrer une valeur" />
+  <section id="section-propositions" style="display:none">
+    <h2>Propositions</h2>
+    <div id="zone-propositions"></div>
+    <div id="zone-vote" style="display:none">
+      <div class="form-groupe">
+        <label for="input-proposition-id">Voter pour la proposition (ID) :</label>
+        <input type="number" id="input-proposition-id" placeholder="Ex : 1" min="1" />
+      </div>
+      <button id="btn-voter">Voter</button>
+      <div id="chargement" style="display:none">Transaction en cours... Confirme dans MetaMask</div>
     </div>
-    <button id="btn-envoyer">Envoyer la transaction</button>
-    <div id="chargement" style="display:none">
-      Transaction en cours... Confirme dans MetaMask
-    </div>
+  </section>
+
+  <section id="section-resultat" style="display:none">
+    <h2>Resultat</h2>
+    <div id="zone-resultat"></div>
   </section>
 
   <div id="zone-messages"></div>
