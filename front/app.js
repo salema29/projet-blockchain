@@ -1,16 +1,25 @@
 let provider = null;
 let signer = null;
 let contrat = null;
+let electionIdCourant = null;
 
-const btnConnecter  = document.getElementById("btn-connecter");
-const adresseWallet = document.getElementById("adresse-wallet");
-const reseau        = document.getElementById("reseau");
-const btnLire       = document.getElementById("btn-lire");
-const valeurContrat = document.getElementById("valeur-contrat");
-const inputValeur   = document.getElementById("input-valeur");
-const btnEnvoyer    = document.getElementById("btn-envoyer");
-const chargement    = document.getElementById("chargement");
-const zoneMessages  = document.getElementById("zone-messages");
+const STATUTS = ["Planifiee", "Active", "Terminee", "Finalisee"];
+
+const btnConnecter       = document.getElementById("btn-connecter");
+const adresseWallet      = document.getElementById("adresse-wallet");
+const reseau             = document.getElementById("reseau");
+const btnCharger         = document.getElementById("btn-charger");
+const inputElectionId    = document.getElementById("input-election-id");
+const zoneElection       = document.getElementById("zone-election");
+const sectionPropositions = document.getElementById("section-propositions");
+const zonePropositions   = document.getElementById("zone-propositions");
+const zoneVote           = document.getElementById("zone-vote");
+const inputPropositionId = document.getElementById("input-proposition-id");
+const btnVoter           = document.getElementById("btn-voter");
+const chargement         = document.getElementById("chargement");
+const sectionResultat    = document.getElementById("section-resultat");
+const zoneResultat       = document.getElementById("zone-resultat");
+const zoneMessages       = document.getElementById("zone-messages");
 
 btnConnecter.addEventListener("click", connecterMetaMask);
 
@@ -31,7 +40,7 @@ async function connecterMetaMask() {
     const chainId = Number(network.chainId);
 
     if (chainId !== 11155111) {
-      afficherErreur(`Mauvais reseau ! Passe sur Sepolia dans MetaMask.`);
+      afficherErreur("Mauvais reseau ! Passe sur Sepolia dans MetaMask.");
       return;
     }
 
@@ -43,7 +52,6 @@ async function connecterMetaMask() {
     btnConnecter.disabled = true;
 
     afficherSucces("Wallet connecte avec succes !");
-    await lireDonnees();
 
   } catch (erreur) {
     if (erreur.code === 4001) {
@@ -54,63 +62,135 @@ async function connecterMetaMask() {
   }
 }
 
-btnLire.addEventListener("click", lireDonnees);
+btnCharger.addEventListener("click", chargerElection);
 
-async function lireDonnees() {
+async function chargerElection() {
   if (!contrat) {
     afficherErreur("Connecte-toi d'abord avec MetaMask.");
+    return;
+  }
+
+  const id = parseInt(inputElectionId.value);
+  if (!id || id < 1) {
+    afficherErreur("Entre un ID d'election valide.");
     return;
   }
 
   try {
-    const valeur = await contrat.lire();
-    valeurContrat.textContent = valeur.toString();
+    const election = await contrat.getElection(id);
+    electionIdCourant = id;
+
+    document.getElementById("election-titre").textContent = election.title;
+    document.getElementById("election-description").textContent = election.description;
+    document.getElementById("election-statut").textContent = STATUTS[election.status] ?? election.status;
+    document.getElementById("election-debut").textContent = new Date(Number(election.startTime) * 1000).toLocaleString();
+    document.getElementById("election-fin").textContent = new Date(Number(election.endTime) * 1000).toLocaleString();
+    document.getElementById("election-votes").textContent = election.totalVotes.toString();
+
+    zoneElection.style.display = "block";
+
+    await chargerPropositions(id, Number(election.status));
+
+    if (Number(election.status) >= 2) {
+      await afficherResultat(id);
+    } else {
+      sectionResultat.style.display = "none";
+    }
+
   } catch (erreur) {
-    afficherErreur("Erreur lors de la lecture : " + erreur.message);
+    afficherErreur("Election introuvable ou erreur : " + erreur.message);
+    zoneElection.style.display = "none";
+    sectionPropositions.style.display = "none";
+    sectionResultat.style.display = "none";
   }
 }
 
-btnEnvoyer.addEventListener("click", envoyerTransaction);
+async function chargerPropositions(electionId, statut) {
+  const propositions = await contrat.getProposals(electionId);
+  const adresse = await signer.getAddress();
+  const dejaVote = await contrat.hasVoted(electionId, adresse);
 
-async function envoyerTransaction() {
-  if (!contrat) {
-    afficherErreur("Connecte-toi d'abord avec MetaMask.");
+  zonePropositions.innerHTML = "";
+
+  propositions.forEach((p) => {
+    const div = document.createElement("div");
+    div.classList.add("proposition");
+    div.innerHTML = `<span class="proposition-id">#${p.id}</span><span class="proposition-nom">${p.name}</span><span class="proposition-votes">${p.voteCount} vote(s)</span>`;
+    zonePropositions.appendChild(div);
+  });
+
+  sectionPropositions.style.display = "block";
+
+  if (statut === 1 && !dejaVote) {
+    zoneVote.style.display = "block";
+  } else {
+    zoneVote.style.display = "none";
+    if (statut === 1 && dejaVote) {
+      afficherInfo("Tu as deja vote pour cette election.");
+    }
+  }
+}
+
+async function afficherResultat(electionId) {
+  const resultat = await contrat.getWinningProposal(electionId);
+
+  zoneResultat.innerHTML = "";
+
+  if (resultat.tie) {
+    zoneResultat.innerHTML = `<p class="resultat-egalite">Egalite — aucun gagnant unique.</p>`;
+  } else if (resultat.winnerProposalId.toString() === "0") {
+    zoneResultat.innerHTML = `<p>Aucun vote enregistre.</p>`;
+  } else {
+    zoneResultat.innerHTML = `
+      <div class="info-ligne"><span class="label">Gagnant</span><span>${resultat.winnerName}</span></div>
+      <div class="info-ligne"><span class="label">Votes</span><span>${resultat.winningVoteCount}</span></div>
+      <div class="info-ligne"><span class="label">Finalise</span><span>${resultat.finalized ? "Oui" : "Non"}</span></div>
+    `;
+  }
+
+  sectionResultat.style.display = "block";
+}
+
+btnVoter.addEventListener("click", voter);
+
+async function voter() {
+  if (!contrat || !electionIdCourant) {
+    afficherErreur("Charge une election d'abord.");
     return;
   }
 
-  const valeurSaisie = inputValeur.value.trim();
-
-  if (valeurSaisie === "") {
-    afficherErreur("Remplis le champ avant d'envoyer.");
+  const propositionId = parseInt(inputPropositionId.value);
+  if (!propositionId || propositionId < 1) {
+    afficherErreur("Entre un ID de proposition valide.");
     return;
   }
 
   try {
     chargement.style.display = "block";
-    btnEnvoyer.disabled = true;
-    btnEnvoyer.textContent = "En cours...";
+    btnVoter.disabled = true;
+    btnVoter.textContent = "En cours...";
 
-    const tx = await contrat.stocker(valeurSaisie);
+    const tx = await contrat.vote(electionIdCourant, propositionId);
     afficherInfo(`Transaction envoyee ! Hash : ${tx.hash.slice(0, 10)}...`);
 
     const recu = await tx.wait();
-    afficherSucces(`Transaction confirmee ! Bloc : ${recu.blockNumber}`);
-    await lireDonnees();
+    afficherSucces(`Vote confirme ! Bloc : ${recu.blockNumber}`);
+
+    await chargerElection();
 
   } catch (erreur) {
     if (erreur.code === 4001 || erreur.code === "ACTION_REJECTED") {
       afficherErreur("Transaction annulee. Tu as refuse dans MetaMask.");
     } else if (erreur.message.includes("revert")) {
       const match = erreur.message.match(/reason="([^"]+)"/);
-      const messageErreur = match ? match[1] : "Condition du contrat non remplie.";
-      afficherErreur("Le contrat a rejete la transaction : " + messageErreur);
+      afficherErreur("Refuse par le contrat : " + (match ? match[1] : "condition non remplie"));
     } else {
       afficherErreur("Erreur : " + erreur.message);
     }
   } finally {
     chargement.style.display = "none";
-    btnEnvoyer.disabled = false;
-    btnEnvoyer.textContent = "Envoyer la transaction";
+    btnVoter.disabled = false;
+    btnVoter.textContent = "Voter";
   }
 }
 
@@ -120,8 +200,8 @@ if (typeof window.ethereum !== "undefined") {
       reinitialiserConnexion();
       afficherInfo("Wallet deconnecte.");
     } else {
-      afficherInfo("Compte change. Reconnecte-toi.");
       reinitialiserConnexion();
+      afficherInfo("Compte change. Reconnecte-toi.");
     }
   });
 
@@ -134,24 +214,19 @@ function reinitialiserConnexion() {
   provider = null;
   signer = null;
   contrat = null;
+  electionIdCourant = null;
   adresseWallet.textContent = "Aucun wallet connecte";
   reseau.textContent = "Non connecte";
   btnConnecter.textContent = "Se connecter avec MetaMask";
   btnConnecter.disabled = false;
-  valeurContrat.textContent = "-";
+  zoneElection.style.display = "none";
+  sectionPropositions.style.display = "none";
+  sectionResultat.style.display = "none";
 }
 
-function afficherSucces(message) {
-  afficherMessage(message, "succes");
-}
-
-function afficherErreur(message) {
-  afficherMessage(message, "erreur");
-}
-
-function afficherInfo(message) {
-  afficherMessage(message, "info");
-}
+function afficherSucces(message) { afficherMessage(message, "succes"); }
+function afficherErreur(message) { afficherMessage(message, "erreur"); }
+function afficherInfo(message)   { afficherMessage(message, "info"); }
 
 function afficherMessage(message, type) {
   zoneMessages.innerHTML = "";
