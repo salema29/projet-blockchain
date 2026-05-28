@@ -1,0 +1,41 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "D:\\M2_2025\\blockchain\\projet\\projet-blockchain\\contracts\\DecentralizedVote.sol": {
+      "lastModificationDate": 1779940861961,
+      "contentHash": "2a8eef97f66cd6b6dcd93faa530954e3",
+      "sourceName": "contracts/DecentralizedVote.sol",
+      "solcConfig": {
+        "version": "0.8.28",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.24"
+      ],
+      "artifacts": [
+        "DecentralizedVote"
+      ]
+    }
+  }
+}
