@@ -171,9 +171,9 @@ npx hardhat run scripts/create-election.js --network sepolia
 | :----------------------------------------------------------------------: | :-----------------------------------------------------------------: |
 | ![Finaliser résultat](screenshots/07_Finaliser_Enregistrer_Resultat.png) | ![Résultat final](screenshots/08_Resultat_Apres_Enregistrement.png) |
 
-|           Tests unitaires Hardhat           |
-| :-----------------------------------------: |
-| ![Tests passés](screenshots/test_passe.png) |
+|                   Cas d'égalité sans gagnant                   |           Tests unitaires Hardhat           |
+| :------------------------------------------------------------: | :-----------------------------------------: |
+| ![Cas d'égalité](screenshots/09_cas_egalite_aucun_gagnant.png) | ![Tests passés](screenshots/test_passe.png) |
 
 ---
 
