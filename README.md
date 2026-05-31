@@ -157,7 +157,7 @@ npx hardhat run scripts/create-election.js --network sepolia
 
 |                   Page initiale                    |                      Connexion MetaMask                      |
 | :------------------------------------------------: | :----------------------------------------------------------: |
-| ![Page initiale](screenshots/01_page_initiale.png) | ![Connexion MetaMask](screenshots/02_connexion_metamask.png) |
+| ![Page initiale](screenshots/01_page_initiale.png) | ![Connexion MetaMask](screenshots/02_connexion_MetaMask.png) |
 
 |               Création d'une élection avec demande de transaction               |                  Détail de l'élection après création                  |
 | :-----------------------------------------------------------------------------: | :-------------------------------------------------------------------: |
@@ -171,9 +171,9 @@ npx hardhat run scripts/create-election.js --network sepolia
 | :----------------------------------------------------------------------: | :-----------------------------------------------------------------: |
 | ![Finaliser résultat](screenshots/07_Finaliser_Enregistrer_Resultat.png) | ![Résultat final](screenshots/08_Resultat_Apres_Enregistrement.png) |
 
-|           Tests unitaires Hardhat           |
-| :-----------------------------------------: |
-| ![Tests passés](screenshots/test_passe.png) |
+|                   Cas d'égalité sans gagnant                   |           Tests unitaires Hardhat           |
+| :------------------------------------------------------------: | :-----------------------------------------: |
+| ![Cas d'égalité](screenshots/09_cas_egalite_aucun_gagnant.png) | ![Tests passés](screenshots/test_passe.png) |
 
 ---
 
