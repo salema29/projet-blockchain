@@ -10,6 +10,7 @@
 Application décentralisée (**DApp**) de vote sur la blockchain Ethereum. Les élections, les propositions et les votes sont enregistrés **on-chain** via un smart contract Solidity déployé sur le réseau de test **Sepolia**. L'interface front-end permet de se connecter avec MetaMask, de consulter les élections actives et de voter.
 
 **Fonctionnalités :**
+
 - Création d'élections avec propositions on-chain (réservé à l'owner)
 - **Vote unique par adresse** Ethereum — impossibilité de voter deux fois
 - Clôture automatique par **deadline** (`block.timestamp`)
@@ -20,8 +21,8 @@ Application décentralisée (**DApp**) de vote sur la blockchain Ethereum. Les �
 
 ## Contrat déployé sur Sepolia
 
-| Réseau | Adresse du contrat |
-|--------|-------------------|
+| Réseau          | Adresse du contrat                           |
+| --------------- | -------------------------------------------- |
 | Sepolia Testnet | `0x59A8C32Fc5A6F3F1b62C87f815946836D10E4c81` |
 
 Voir sur Etherscan : https://sepolia.etherscan.io/address/0x59A8C32Fc5A6F3F1b62C87f815946836D10E4c81
@@ -94,13 +95,13 @@ Les tests couvrent les 4 cas principaux définis dans le cahier des charges :
 npm test
 ```
 
-| Suite de tests | Cas couverts |
-|---|---|
-| Création d'élection | Création valide + événement, données retournées, rejet titre vide, rejet < 2 propositions, rejet non-owner |
-| Vote unique par adresse | Premier vote + événement, refus double vote, plusieurs votants, enregistrement du choix |
-| Refus de vote après deadline | Rejet vote après clôture, rejet vote avant ouverture |
-| Calcul du gagnant | Désignation gagnant correct, refus finalisation avant deadline, refus double finalisation |
-| Cas d'égalité (bonus) | Égalité détectée après finalisation, `getWinningProposal` retourne `tie=true` en live |
+| Suite de tests               | Cas couverts                                                                                               |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Création d'élection          | Création valide + événement, données retournées, rejet titre vide, rejet < 2 propositions, rejet non-owner |
+| Vote unique par adresse      | Premier vote + événement, refus double vote, plusieurs votants, enregistrement du choix                    |
+| Refus de vote après deadline | Rejet vote après clôture, rejet vote avant ouverture                                                       |
+| Calcul du gagnant            | Désignation gagnant correct, refus finalisation avant deadline, refus double finalisation                  |
+| Cas d'égalité (bonus)        | Égalité détectée après finalisation, `getWinningProposal` retourne `tie=true` en live                      |
 
 **16 tests — tous passants.**
 
@@ -109,6 +110,7 @@ npm test
 ## Déploiement du contrat
 
 ### Pré-requis
+
 - Node.js >= 18
 - Un wallet Ethereum avec des SepoliaETH (faucet : https://sepoliafaucet.com)
 - Un nœud RPC Sepolia (Infura ou Alchemy)
@@ -153,29 +155,45 @@ npx hardhat run scripts/create-election.js --network sepolia
 
 ## Captures d'écran
 
-| Page initiale | Connexion MetaMask | Wallet connecté |
-|:---:|:---:|:---:|
-| ![Page initiale](screenshots/01_page_initiale.png) | ![Connexion](screenshots/02_connexion_metamask.png) | ![Connecté](screenshots/03_connecte.png) |
+|                   Page initiale                    |                      Connexion MetaMask                      |
+| :------------------------------------------------: | :----------------------------------------------------------: |
+| ![Page initiale](screenshots/01_page_initiale.png) | ![Connexion MetaMask](screenshots/02_connexion_MetaMask.png) |
 
-| Envoi de transaction | Transaction confirmée | Message d'erreur |
-|:---:|:---:|:---:|
-| ![Envoi tx](screenshots/04_envoi_transaction.png) | ![Confirmée](screenshots/05_transaction_confirmee.png) | ![Erreur](screenshots/06_message_erreur.png) |
+|               Création d'une élection avec demande de transaction               |                  Détail de l'élection après création                  |
+| :-----------------------------------------------------------------------------: | :-------------------------------------------------------------------: |
+| ![Création élection](screenshots/03_Creation_Election_Et_Envoi_Transaction.png) | ![Détail élection](screenshots/04_Detail_Election_Apres_Creation.png) |
+
+|                     Vote et demande de transaction                     |                Sécurité : vote déjà effectué                 |
+| :--------------------------------------------------------------------: | :----------------------------------------------------------: |
+| ![Vote et transaction](screenshots/05_Vote_Et_Demande_Transaction.png) | ![Vote déjà effectué](screenshots/06_Vote_Deja_Effectue.png) |
+
+|                        Finalisation de l'élection                        |                    Résultat après enregistrement                    |
+| :----------------------------------------------------------------------: | :-----------------------------------------------------------------: |
+| ![Finaliser résultat](screenshots/07_Finaliser_Enregistrer_Resultat.png) | ![Résultat final](screenshots/08_Resultat_Apres_Enregistrement.png) |
+
+|           Tests unitaires Hardhat           |
+| :-----------------------------------------: |
+| ![Tests passés](screenshots/test_passe.png) |
 
 ---
 
 ## Points bonus
 
 ### Tests unitaires Hardhat
+
 Dossier `test/` avec 16 tests organisés en 5 suites. Lancer avec `npm test`.
 
 ### Documentation NatSpec
+
 Toutes les fonctions publiques du contrat sont documentées avec `@notice`, `@param` et `@return` directement dans `contracts/DecentralizedVote.sol`.
 
 ### Déploiement GitHub Pages
+
 Le dossier `front/` est déployé automatiquement sur GitHub Pages via le workflow `.github/workflows/pages.yml` à chaque push sur `main`.
 
 ### OpenZeppelin
-Le contrat **n'importe pas OpenZeppelin** : le pattern `Ownable` est implémenté manuellement (`modifier onlyOwner` + `transferOwnership` + événement `OwnershipTransferred`). Ce choix est délibéré — le contrat reste autonome, sans dépendance externe, et le comportement est identique à `Ownable.sol` d'OZ. La recommandation S06 *"toujours utiliser `msg.sender`, jamais `tx.origin`"* est appliquée dans tous les modifiers. Pour un projet en production, l'import OZ (`import "@openzeppelin/contracts/access/Ownable.sol"`) serait préférable car le code est audité.
+
+Le contrat **n'importe pas OpenZeppelin** : le pattern `Ownable` est implémenté manuellement (`modifier onlyOwner` + `transferOwnership` + événement `OwnershipTransferred`). Ce choix est délibéré — le contrat reste autonome, sans dépendance externe, et le comportement est identique à `Ownable.sol` d'OZ. La recommandation S06 _"toujours utiliser `msg.sender`, jamais `tx.origin`"_ est appliquée dans tous les modifiers. Pour un projet en production, l'import OZ (`import "@openzeppelin/contracts/access/Ownable.sol"`) serait préférable car le code est audité.
 
 ---
 
@@ -183,22 +201,21 @@ Le contrat **n'importe pas OpenZeppelin** : le pattern `Ownable` est implément�
 
 Conformément aux pratiques enseignées (S06 — Sécurité Solidity) :
 
-| Mesure | Implémentation |
-|---|---|
-| Modifiers avec messages clairs | `onlyOwner`, `electionExists`, `onlyBeforeStart` |
-| `msg.sender` (jamais `tx.origin`) | Tous les contrôles d'accès |
-| Pas d'envoi d'ETH | Aucune surface de reentrancy |
-| `require` avec messages explicites | Sur toutes les entrées utilisateur |
-| Solidity 0.8.24 | Protection overflow/underflow automatique |
+| Mesure                             | Implémentation                                   |
+| ---------------------------------- | ------------------------------------------------ |
+| Modifiers avec messages clairs     | `onlyOwner`, `electionExists`, `onlyBeforeStart` |
+| `msg.sender` (jamais `tx.origin`)  | Tous les contrôles d'accès                       |
+| Pas d'envoi d'ETH                  | Aucune surface de reentrancy                     |
+| `require` avec messages explicites | Sur toutes les entrées utilisateur               |
+| Solidity 0.8.24                    | Protection overflow/underflow automatique        |
 
 ---
 
 ## Équipe
 
-| Membre | Responsabilité principale | Branche |
-|---|---|---|
-| Iaritina | Smart contract Solidity — logique métier | `feat/smart-contract` |
-| Haroavo | Sécurité, déploiement Sepolia | `feat/security-tests-deploy` |
-| Mezana | Front-end DApp (MetaMask + ethers.js) | `feat/frontend-dapp` |
-| Salema | README, tests unitaires, documentation, démo | `docs-bonus/readme-tests-demo` |
-
+| Membre   | Responsabilité principale                    | Branche                        |
+| -------- | -------------------------------------------- | ------------------------------ |
+| Iaritina | Smart contract Solidity — logique métier     | `feat/smart-contract`          |
+| Haroavo  | Sécurité, déploiement Sepolia                | `feat/security-tests-deploy`   |
+| Mezana   | Front-end DApp (MetaMask + ethers.js)        | `feat/frontend-dapp`           |
+| Salema   | README, tests unitaires, documentation, démo | `docs-bonus/readme-tests-demo` |
