@@ -2,6 +2,7 @@ const { expect } = require("chai");
 const { ethers } = require("hardhat");
 const { time } = require("@nomicfoundation/hardhat-network-helpers");
 
+
 describe("DecentralizedVote", function () {
   let contrat;
   let owner;
