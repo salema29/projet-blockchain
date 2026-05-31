@@ -5,6 +5,12 @@
 
 ---
 
+## Démonstration
+
+Voir la vidéo de démonstration du projet : https://www.youtube.com/watch?v=zhicfPcmCcw
+
+---
+
 ## Description
 
 Application décentralisée (**DApp**) de vote sur la blockchain Ethereum. Les élections, les propositions et les votes sont enregistrés **on-chain** via un smart contract Solidity déployé sur le réseau de test **Sepolia**. L'interface front-end permet de se connecter avec MetaMask, de consulter les élections actives et de voter.
