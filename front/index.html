@@ -7,62 +7,135 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
-  <header>
-    <h1>Vote Decentralise</h1>
-    <p>Reseau : <strong id="reseau">Non connecte</strong></p>
-  </header>
-
-  <section id="section-connexion">
-    <h2>Connexion</h2>
-    <button id="btn-connecter">Se connecter avec MetaMask</button>
-    <p id="adresse-wallet">Aucun wallet connecte</p>
-  </section>
-
-  <section id="section-election">
-    <h2>Chercher une election</h2>
-    <div class="form-groupe">
-      <label for="input-election-id">ID de l'election :</label>
-      <input type="number" id="input-election-id" placeholder="Ex : 1" min="1" />
-    </div>
-    <button id="btn-charger">Charger l'election</button>
-
-    <div id="zone-election" style="display:none">
-      <div class="info-ligne"><span class="label">Titre</span><span id="election-titre">-</span></div>
-      <div class="info-ligne"><span class="label">Description</span><span id="election-description">-</span></div>
-      <div class="info-ligne"><span class="label">Statut</span><span id="election-statut">-</span></div>
-      <div class="info-ligne"><span class="label">Debut</span><span id="election-debut">-</span></div>
-      <div class="info-ligne"><span class="label">Fin</span><span id="election-fin">-</span></div>
-      <div class="info-ligne"><span class="label">Votes totaux</span><span id="election-votes">-</span></div>
-    </div>
-  </section>
-
-  <section id="section-propositions" style="display:none">
-    <h2>Propositions</h2>
-    <div id="zone-propositions"></div>
-    <div id="zone-vote" style="display:none">
-      <div class="form-groupe">
-        <label for="input-proposition-id">Voter pour la proposition (ID) :</label>
-        <input type="number" id="input-proposition-id" placeholder="Ex : 1" min="1" />
+  <div class="page-shell">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">DApp Ethereum</p>
+        <h1>Vote Decentralise</h1>
+        <p class="hero-text">Connecte ton wallet, administre une election on-chain, puis consulte les resultats sans quitter le front.</p>
       </div>
-      <button id="btn-voter">Voter</button>
-      <div id="chargement" style="display:none">Transaction en cours... Confirme dans MetaMask</div>
-    </div>
-  </section>
+      <div class="hero-status">
+        <span class="status-pill">Reseau : <strong id="reseau">Non connecte</strong></span>
+        <span class="status-pill">Contrat : <strong id="contrat-adresse-courte">Non charge</strong></span>
+      </div>
+    </header>
 
-  <section id="section-finaliser" style="display:none">
-    <h2>Finaliser l'election</h2>
-    <p>L'election est terminee. N'importe qui peut enregistrer le resultat definitif on-chain.</p>
-    <button id="btn-finaliser">Finaliser et enregistrer le resultat</button>
-    <div id="chargement-finaliser" style="display:none">Finalisation en cours... Confirme dans MetaMask</div>
-  </section>
+    <div id="zone-messages"></div>
 
-  <section id="section-resultat" style="display:none">
-    <h2>Resultat</h2>
-    <div id="zone-resultat"></div>
-  </section>
+    <main class="dashboard">
+      <div class="colonne">
+        <section id="section-connexion">
+          <h2>Connexion</h2>
+          <button id="btn-connecter">Se connecter avec MetaMask</button>
+          <p id="adresse-wallet">Aucun wallet connecte</p>
+        </section>
 
-  <div id="zone-messages"></div>
+        <section id="section-contrat">
+          <h2>Etat du contrat</h2>
+          <div class="info-ligne"><span class="label">Adresse</span><span id="contrat-adresse">-</span></div>
+          <div class="info-ligne"><span class="label">Owner</span><span id="contrat-owner">-</span></div>
+          <div class="info-ligne"><span class="label">Nombre d'elections</span><span id="contrat-election-count">-</span></div>
+          <div class="info-ligne"><span class="label">Ton role</span><span id="contrat-role">Visiteur</span></div>
+        </section>
+
+        <section id="section-admin">
+          <h2>Administration</h2>
+          <p class="section-intro">Ces actions appellent les fonctions reservees au proprietaire du contrat.</p>
+
+          <div class="bloc-formulaire">
+            <h3>Creer une election</h3>
+            <div class="form-groupe">
+              <label for="input-create-title">Titre</label>
+              <input type="text" id="input-create-title" placeholder="Election BDE 2026" />
+            </div>
+            <div class="form-groupe">
+              <label for="input-create-description">Description</label>
+              <input type="text" id="input-create-description" placeholder="Vote de demonstration sur Sepolia" />
+            </div>
+            <div class="grille-formulaire">
+              <div class="form-groupe">
+                <label for="input-create-start">Debut</label>
+                <input type="datetime-local" id="input-create-start" />
+              </div>
+              <div class="form-groupe">
+                <label for="input-create-end">Fin</label>
+                <input type="datetime-local" id="input-create-end" />
+              </div>
+            </div>
+            <div class="form-groupe">
+              <label for="input-create-proposals">Propositions</label>
+              <textarea id="input-create-proposals" rows="5" placeholder="Une proposition par ligne&#10;Alice&#10;Bob&#10;Charlie"></textarea>
+            </div>
+            <button id="btn-creer-election">Creer l'election</button>
+            <div id="chargement-creer" class="chargement" style="display:none">Creation en cours... Confirme dans MetaMask</div>
+          </div>
+
+          <div class="bloc-formulaire">
+            <h3>Ajouter une proposition</h3>
+            <div class="grille-formulaire">
+              <div class="form-groupe">
+                <label for="input-add-election-id">ID de l'election</label>
+                <input type="number" id="input-add-election-id" placeholder="Ex : 1" min="1" />
+              </div>
+              <div class="form-groupe">
+                <label for="input-add-proposal-name">Nom de la proposition</label>
+                <input type="text" id="input-add-proposal-name" placeholder="Nouvelle proposition" />
+              </div>
+            </div>
+            <button id="btn-ajouter-proposition">Ajouter la proposition</button>
+            <div id="chargement-ajout" class="chargement" style="display:none">Ajout en cours... Confirme dans MetaMask</div>
+          </div>
+        </section>
+      </div>
+
+      <div class="colonne">
+        <section id="section-election">
+          <h2>Consulter une election</h2>
+          <div class="barre-action">
+            <div class="form-groupe">
+              <label for="input-election-id">ID de l'election</label>
+              <input type="number" id="input-election-id" placeholder="Ex : 1" min="1" />
+            </div>
+            <button id="btn-charger">Charger l'election</button>
+          </div>
+
+          <div id="zone-election" style="display:none">
+            <div class="info-ligne"><span class="label">Titre</span><span id="election-titre">-</span></div>
+            <div class="info-ligne"><span class="label">Description</span><span id="election-description">-</span></div>
+            <div class="info-ligne"><span class="label">Statut</span><span id="election-statut">-</span></div>
+            <div class="info-ligne"><span class="label">Debut</span><span id="election-debut">-</span></div>
+            <div class="info-ligne"><span class="label">Fin</span><span id="election-fin">-</span></div>
+            <div class="info-ligne"><span class="label">Votes totaux</span><span id="election-votes">-</span></div>
+          </div>
+        </section>
+
+        <section id="section-propositions" style="display:none">
+          <h2>Propositions et vote</h2>
+          <div id="zone-propositions"></div>
+          <div id="zone-vote" style="display:none">
+            <div class="form-groupe">
+              <label for="input-proposition-id">ID de la proposition a choisir</label>
+              <input type="number" id="input-proposition-id" placeholder="Ex : 1" min="1" />
+            </div>
+            <button id="btn-voter">Voter</button>
+            <div id="chargement" class="chargement" style="display:none">Transaction en cours... Confirme dans MetaMask</div>
+          </div>
+        </section>
+
+        <section id="section-finaliser" style="display:none">
+          <h2>Finaliser l'election</h2>
+          <p class="section-intro">Quand l'election est terminee, n'importe quel compte peut enregistrer le resultat definitif sur la blockchain.</p>
+          <button id="btn-finaliser">Finaliser et enregistrer le resultat</button>
+          <div id="chargement-finaliser" class="chargement" style="display:none">Finalisation en cours... Confirme dans MetaMask</div>
+        </section>
+
+        <section id="section-resultat" style="display:none">
+          <h2>Resultat</h2>
+          <div id="zone-resultat"></div>
+        </section>
+      </div>
+    </main>
+  </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
   <script src="abi.js"></script>
