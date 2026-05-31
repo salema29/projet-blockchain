@@ -157,7 +157,7 @@ npx hardhat run scripts/create-election.js --network sepolia
 
 |                   Page initiale                    |                      Connexion MetaMask                      |
 | :------------------------------------------------: | :----------------------------------------------------------: |
-| ![Page initiale](screenshots/01_page_initiale.png) | ![Connexion MetaMask](screenshots/02_connexion_MetaMask.png) |
+| ![Page initiale](screenshots/01_page_initiale.png) | ![Connexion MetaMask](screenshots/02_connexion_metamask.png) |
 
 |               Création d'une élection avec demande de transaction               |                  Détail de l'élection après création                  |
 | :-----------------------------------------------------------------------------: | :-------------------------------------------------------------------: |
