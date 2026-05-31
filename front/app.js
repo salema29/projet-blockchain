@@ -15,11 +15,14 @@ const sectionPropositions = document.getElementById("section-propositions");
 const zonePropositions   = document.getElementById("zone-propositions");
 const zoneVote           = document.getElementById("zone-vote");
 const inputPropositionId = document.getElementById("input-proposition-id");
-const btnVoter           = document.getElementById("btn-voter");
-const chargement         = document.getElementById("chargement");
-const sectionResultat    = document.getElementById("section-resultat");
-const zoneResultat       = document.getElementById("zone-resultat");
-const zoneMessages       = document.getElementById("zone-messages");
+const btnVoter              = document.getElementById("btn-voter");
+const chargement            = document.getElementById("chargement");
+const sectionFinaliser      = document.getElementById("section-finaliser");
+const btnFinaliser          = document.getElementById("btn-finaliser");
+const chargementFinaliser   = document.getElementById("chargement-finaliser");
+const sectionResultat       = document.getElementById("section-resultat");
+const zoneResultat          = document.getElementById("zone-resultat");
+const zoneMessages          = document.getElementById("zone-messages");
 
 btnConnecter.addEventListener("click", connecterMetaMask);
 
@@ -91,6 +94,12 @@ async function chargerElection() {
 
     await chargerPropositions(id, Number(election.status));
 
+    if (Number(election.status) === 2) {
+      sectionFinaliser.style.display = "block";
+    } else {
+      sectionFinaliser.style.display = "none";
+    }
+
     if (Number(election.status) >= 2) {
       await afficherResultat(id);
     } else {
@@ -152,6 +161,7 @@ async function afficherResultat(electionId) {
 }
 
 btnVoter.addEventListener("click", voter);
+btnFinaliser.addEventListener("click", finaliserElection);
 
 async function voter() {
   if (!contrat || !electionIdCourant) {
@@ -194,6 +204,41 @@ async function voter() {
   }
 }
 
+async function finaliserElection() {
+  if (!contrat || !electionIdCourant) {
+    afficherErreur("Charge une election d'abord.");
+    return;
+  }
+
+  try {
+    chargementFinaliser.style.display = "block";
+    btnFinaliser.disabled = true;
+    btnFinaliser.textContent = "En cours...";
+
+    const tx = await contrat.finalizeElection(electionIdCourant);
+    afficherInfo(`Transaction envoyee ! Hash : ${tx.hash.slice(0, 10)}...`);
+
+    const recu = await tx.wait();
+    afficherSucces(`Election finalisee ! Bloc : ${recu.blockNumber}`);
+
+    await chargerElection();
+
+  } catch (erreur) {
+    if (erreur.code === 4001 || erreur.code === "ACTION_REJECTED") {
+      afficherErreur("Transaction annulee. Tu as refuse dans MetaMask.");
+    } else if (erreur.message.includes("revert")) {
+      const match = erreur.message.match(/reason="([^"]+)"/);
+      afficherErreur("Refuse par le contrat : " + (match ? match[1] : "condition non remplie"));
+    } else {
+      afficherErreur("Erreur : " + erreur.message);
+    }
+  } finally {
+    chargementFinaliser.style.display = "none";
+    btnFinaliser.disabled = false;
+    btnFinaliser.textContent = "Finaliser et enregistrer le resultat";
+  }
+}
+
 if (typeof window.ethereum !== "undefined") {
   window.ethereum.on("accountsChanged", (comptes) => {
     if (comptes.length === 0) {
@@ -221,6 +266,7 @@ function reinitialiserConnexion() {
   btnConnecter.disabled = false;
   zoneElection.style.display = "none";
   sectionPropositions.style.display = "none";
+  sectionFinaliser.style.display = "none";
   sectionResultat.style.display = "none";
 }
 
