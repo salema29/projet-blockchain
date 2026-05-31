@@ -175,7 +175,7 @@ Toutes les fonctions publiques du contrat sont documentées avec `@notice`, `@pa
 Le dossier `front/` est déployé automatiquement sur GitHub Pages via le workflow `.github/workflows/pages.yml` à chaque push sur `main`.
 
 ### OpenZeppelin
-Le contrat implémente un pattern `Ownable` **manuel** (`modifier onlyOwner` + fonction `transferOwnership` avec événement `OwnershipTransferred`), aligné avec les conventions OpenZeppelin mais sans dépendance externe pour garder le contrat léger. Recommandation de la leçon S06 : privilégier `msg.sender` (et non `tx.origin`) pour l'authentification — appliqué dans tous les modifiers.
+Le contrat **n'importe pas OpenZeppelin** : le pattern `Ownable` est implémenté manuellement (`modifier onlyOwner` + `transferOwnership` + événement `OwnershipTransferred`). Ce choix est délibéré — le contrat reste autonome, sans dépendance externe, et le comportement est identique à `Ownable.sol` d'OZ. La recommandation S06 *"toujours utiliser `msg.sender`, jamais `tx.origin`"* est appliquée dans tous les modifiers. Pour un projet en production, l'import OZ (`import "@openzeppelin/contracts/access/Ownable.sol"`) serait préférable car le code est audité.
 
 ---
 
@@ -202,6 +202,3 @@ Conformément aux pratiques enseignées (S06 — Sécurité Solidity) :
 | Mezana | Front-end DApp (MetaMask + ethers.js) | `feat/frontend-dapp` |
 | Salema | README, tests unitaires, documentation, démo | `docs-bonus/readme-tests-demo` |
 
----
-
-*Steave — IT University Madagascar · Blockchain 2025/2026*
