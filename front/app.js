@@ -107,7 +107,7 @@ async function chargerElection() {
     }
 
   } catch (erreur) {
-    afficherErreur("Election introuvable ou erreur : " + erreur.message);
+    afficherErreur("Election introuvable ou erreur : " + (erreur.reason ?? erreur.shortMessage ?? erreur.message));
     zoneElection.style.display = "none";
     sectionPropositions.style.display = "none";
     sectionResultat.style.display = "none";
